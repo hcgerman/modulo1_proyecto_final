@@ -1,12 +1,8 @@
 import EyeImage
 
-class Examination:
+class EyeExamination:
 
-    def __init__(self, examination_id: int, age: int, gender: int, diagnosis: int, dioptre_1: float, dioptre_2: float, astigmatism: int, phakic_pseudophakic: int, pneumatic: int, perkins: int, pachymetry: int, axial_length: float, vf_md: float):
-        self.examination_id = examination_id = examination_id
-        self.age = age
-        self.gender = gender
-        self. diagnosis = diagnosis
+    def __init__(self, dioptre_1: float, dioptre_2: float, astigmatism: int, phakic_pseudophakic: int, pneumatic: int, perkins: int, pachymetry: int, axial_length: float, vf_md: float):
         self.dioptre_1 = dioptre_1
         self.dioptre_2 = dioptre_2
         self.astigmatism = astigmatism
@@ -16,17 +12,10 @@ class Examination:
         self.pachymetry = pachymetry
         self.axial_length = axial_length
         self.vf_md = vf_md
-        self.eye_image_od = None
-        self.eye_image_os = None
+        self.eye_image = None
 
-    def add_eye_image_contourns_od(self, image_od: EyeImage):
-        self.eye_image_od = image_od
-
-    def add_eye_image_contourns_os(self, image_os: EyeImage):
-        self.eye_image_os = image_os
-
-    def update_age(self, age: int):
-        self.age = age
+    def add_eye_image(self, eye_image: EyeImage):
+        self.eye_image_os = eye_image
 
     def update_dioptre_1(self, dioptre_1: float):
         self.dioptre_1 = dioptre_1

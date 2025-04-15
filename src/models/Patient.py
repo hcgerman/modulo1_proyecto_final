@@ -1,5 +1,5 @@
 class Patient:
-
+    #Funciones para gestionar Patient
     def __init__(self, age: int, gender: int):
         self.age = age
         self.gender = gender

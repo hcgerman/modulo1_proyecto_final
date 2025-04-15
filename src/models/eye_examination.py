@@ -1,7 +1,7 @@
 from models.eye_image import EyeImage
 
 class EyeExamination:
-
+    #Funciones para gestionar EyeExamination
     def __init__(self, dioptre_1: float, dioptre_2: float, astigmatism: float, phakic_pseudophakic: int, pneumatic: float, perkins: float, pachymetry: float, axial_length: float, vf_md: float):
         self.dioptre_1 = dioptre_1
         self.dioptre_2 = dioptre_2

@@ -2,7 +2,7 @@ from models.patient import Patient
 from models.eye_examination import EyeExamination
 
 class Diagnosis:
-
+    #Funciones para gestionar diagnosis
     def __init__(self, diagnosis_id: int, diagnosis: int):
         self.diagnosis_id = diagnosis_id
         self.diagnosis = diagnosis

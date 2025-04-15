@@ -1,4 +1,4 @@
-from models.patient import Patient
+from models.Patient import Patient
 from models.eye_examination import EyeExamination
 
 class Diagnosis:

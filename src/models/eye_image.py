@@ -1,4 +1,4 @@
-from models.retina import Retina
+from models.Retina import Retina
 from models.contours import Contours
 
 class EyeImage:

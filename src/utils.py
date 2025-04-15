@@ -111,7 +111,7 @@ def add_diagnosises_os(diagnosises: list[Diagnosis], df_entry_os: pd.DataFrame):
                 eye_image.add_retina_image(retina_image=retina_image)
                 eye_image.add_contours_layer(contours_layer=contours_layers)
 
-# Carga los datos de los archivos Excel a la Estructura de Clases creada
+# Carga los datos de los archivos Excel a la Estructura de Clases creada (Revisar documentación)
 def load():
     df = convert_xls_to_df(os.path.join('..', 'data', 'load_data', 'ClinicalData', 'diagnosis_data.xlsx'), 'od')
     diagnosises = load_data(df)

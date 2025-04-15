@@ -1,5 +1,5 @@
 class Retina:
-    #Funciones para gestionar Retina
+    #Funciones para gestionar Retina, el path
     def __init__(self, path_retina_image: str):
         self.path_retina_image = path_retina_image
 

@@ -1,5 +1,5 @@
 class Contours:
-    #Funciones para gestionar Contourns
+    #Funciones para gestionar Contourns de los expertos (1 y 2)
     def __init__(self, path_retina_cup_exp1: str, path_retina_cup_exp2: str, path_retina_disc_exp1: str, path_retina_disc_exp2: str):
         self.path_retina_cup_exp1 = path_retina_cup_exp1
         self.path_retina_cup_exp2 = path_retina_cup_exp2

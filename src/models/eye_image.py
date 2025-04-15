@@ -2,7 +2,7 @@ from models.retina import Retina
 from models.contours import Contours
 
 class EyeImage:
-    #Funciones para gestionar EyeImage
+    #Funciones para gestionar EyeImage, utilizado para OD y OS
     def __init__(self, path_retina_contours_image: str):
         self.path_retina_contours_image = path_retina_contours_image
         self.retina_image = None

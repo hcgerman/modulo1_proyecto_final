@@ -1,18 +1,20 @@
-from .models.diagnosis import Diagnosis
-from .models.patient import Patient
-from .models.eye_examination import EyeExamination
-from .models.eye_image import EyeImage
-from .models.retina import Retina
-from .models.contours import Contours
+from models.diagnosis import Diagnosis
+from models.patient import Patient
+from models.eye_examination import EyeExamination
+from models.eye_image import EyeImage
+from models.retina import Retina
+from models.contours import Contours
 import pandas as pd
 import os
 
+# Convierte el excel recibido en un DataFrame de pandas
 def convert_xls_to_df(path_file: pd.ExcelFile, sheet: str) -> pd.DataFrame:
     df = pd.read_excel(path_file, sheet_name=sheet)
     df_optimazing = optimazing_df(df)
     print(df_optimazing)
     return df_optimazing
 
+# Realiza la limpieza del código ID a formato int y aplica tipo de dato a las columnas del DataFrame
 def optimazing_df(df: pd.DataFrame) -> pd.DataFrame:
     df['ID'] = df['ID'].str.replace('#', '').astype('int')
     df['Age'] = df['Age'].astype('Int8')
@@ -29,9 +31,10 @@ def optimazing_df(df: pd.DataFrame) -> pd.DataFrame:
     df['VF_MD'] = df['VF_MD'].astype('Float32')
     return df
 
+# Carga los datos de patient, diagnosis, EyeExamination (OD), EyeImage (OD), Contours (OD), Retina (OD). De df_entry_od a la lista diagnosises[]
 def load_data(df_entry_od: str) -> list:
     try:
-        diagnosises_od = []
+        diagnosises = []
         for index, row in df_entry_od.iterrows():
             diagnosis = Diagnosis(
                 diagnosis_id=row['ID'],
@@ -69,15 +72,16 @@ def load_data(df_entry_od: str) -> list:
             eye_examination.add_eye_image(eye_image=eye_image)
             eye_image.add_retina_image(retina_image=retina_image)
             eye_image.add_contours_layer(contours_layer=contours_layers)
-            diagnosises_od.append(diagnosis)
+            diagnosises.append(diagnosis)
     except Exception as e:
         print(e)
     else: 
-        return diagnosises_od
+        return diagnosises
 
-def add_diagnosises_os(diagnosises_loaded: list[Diagnosis], df_entry_os: pd.DataFrame):
+# Agrega EyeExamination (OS), EyeImage (OS), Contours (OS), Retina (OS). De df_entry_os a la lista diagnosises[]
+def add_diagnosises_os(diagnosises: list[Diagnosis], df_entry_os: pd.DataFrame):
     for index, row_os in df_entry_os.iterrows():
-        for diagnosis in diagnosises_loaded:
+        for diagnosis in diagnosises:
             if row_os['ID']==diagnosis.diagnosis_id:
                 eye_examination = EyeExamination(
                     dioptre_1=row_os['dioptre_1'],
@@ -106,3 +110,10 @@ def add_diagnosises_os(diagnosises_loaded: list[Diagnosis], df_entry_os: pd.Data
                 eye_examination.add_eye_image(eye_image=eye_image)
                 eye_image.add_retina_image(retina_image=retina_image)
                 eye_image.add_contours_layer(contours_layer=contours_layers)
+
+# Carga los datos de los archivos Excel a la Estructura de Clases creada
+def load():
+    df = convert_xls_to_df(os.path.join('..', 'data', 'load_data', 'ClinicalData', 'diagnosis_data.xlsx'), 'od')
+    diagnosises = load_data(df)
+    df_os = convert_xls_to_df(os.path.join('..', 'data', 'load_data', 'ClinicalData', 'diagnosis_data.xlsx'), 'os')
+    add_diagnosises_os(diagnosises=diagnosises, df_entry_os=df_os)

@@ -1,8 +1,9 @@
 from models.patient import Patient
 from models.eye_examination import EyeExamination
 
+
 class Diagnosis:
-    #Funciones para gestionar diagnosis
+    # Funciones para gestionar diagnosis
     def __init__(self, diagnosis_id: int, diagnosis: int):
         self.diagnosis_id = diagnosis_id
         self.diagnosis = diagnosis
@@ -11,7 +12,7 @@ class Diagnosis:
         self.eye_examination_os = None
 
     def add_patient(self, patient: Patient):
-        self.patient = patient    
+        self.patient = patient
 
     def add_eye_examination_od(self, eye_examination_od: EyeExamination):
         self.eye_examination_od = eye_examination_od
@@ -23,7 +24,17 @@ class Diagnosis:
         self.diagnosis = diagnosis
 
     def __str__(self):
-        return f'Diagnosis: (diagnosis_id: {self.diagnosis_id}, diagnosis: {self.diagnosis}, patient: {self.patient}, eye_examination_od: {self.eye_examination_od}, eye_examination_os: {self.eye_examination_os})'
+        header = f" DIAGNOSIS REPORT - ID: {self.diagnosis_id} "
+        line = "=" * len(header)
+        return (
+            f"{line}\n"
+            f"{header}\n"
+            f"{line}\n\n"
+            f"  Diagnosis: {self.diagnosis}\n"
+            f"  Patient:\n    {self.patient}\n"
+            f"  Eye Examination OD:\n    {str(self.eye_examination_od).replace(chr(10), chr(10) + '    ')}\n"
+            f"  Eye Examination OS:\n    {str(self.eye_examination_os).replace(chr(10), chr(10) + '    ')}"
+        )
 
     def __repr__(self):
         return self.__str__()

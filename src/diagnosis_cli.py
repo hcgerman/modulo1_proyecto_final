@@ -37,7 +37,7 @@ class DiagnosisCLI:
                 print("=" * 40)
                 print(record)
             elif opcion == "2":
-                print("Función: Editar registro")
+                self.edit_record()
             elif opcion == "3":
                 record = self.search_record()
                 if record:
@@ -67,24 +67,36 @@ class DiagnosisCLI:
         print("\n" + "=" * 40)
         print("🆕 FUNCIÓN: CREAR NUEVO REGISTRO")
         print("=" * 40)
-        age = int(input("Edad del paciente: "))
-        gender = int(input("Género (0 = masculino, 1 = femenino): "))
-        patient = Patient(age, gender)
 
-        diagnosis_id = int(input("ID del diagnóstico: "))
-        diagnosis_type = int(
-            input("Tipo de diagnóstico (0 = sano, 1 = glaucoma, 2 = sospechoso): ")
-        )
-        diagnosis = Diagnosis(diagnosis_id, diagnosis_type)
-        diagnosis.add_patient(patient)
+        try:
+            diagnosis_id = int(input("ID del diagnóstico: "))
+            if any(r.diagnosis_id == diagnosis_id for r in self.records):
+                print(
+                    f"❌ Ya existe un registro con el ID {diagnosis_id}. No se puede crear duplicado."
+                )
+                return None
 
-        print("\n=== Datos para OD (ojo derecho) ===")
-        diagnosis.add_eye_examination_od(self.create_eye_examination())
+            age = int(input("Edad del paciente: "))
+            gender = int(input("Género (0 = masculino, 1 = femenino): "))
+            patient = Patient(age, gender)
 
-        print("\n=== Datos para OS (ojo izquierdo) ===")
-        diagnosis.add_eye_examination_os(self.create_eye_examination())
+            diagnosis_type = int(
+                input("Tipo de diagnóstico (0 = sano, 1 = glaucoma, 2 = sospechoso): ")
+            )
+            diagnosis = Diagnosis(diagnosis_id, diagnosis_type)
+            diagnosis.add_patient(patient)
 
-        return diagnosis
+            print("\n=== Datos para OD (ojo derecho) ===")
+            diagnosis.add_eye_examination_od(self.create_eye_examination())
+
+            print("\n=== Datos para OS (ojo izquierdo) ===")
+            diagnosis.add_eye_examination_os(self.create_eye_examination())
+
+            return diagnosis
+
+        except ValueError:
+            print("❌ Entrada inválida. No se pudo crear el registro.")
+            return None
 
     def create_eye_examination(self):
         dioptre_1 = float(input("Dioptría 1: "))
@@ -250,3 +262,152 @@ class DiagnosisCLI:
             print("❌ No se encontró ningún registro con ese ID.")
         except ValueError:
             print("❌ Entrada inválida. Debe ser un número.")
+
+    def edit_record(self):
+        print("\n" + "=" * 40)
+        print("✏️ FUNCIÓN: EDITAR REGISTRO POR ID")
+        print("=" * 40)
+
+        if not self.records:
+            print("⚠️ No hay registros disponibles.")
+            return
+
+        try:
+            ids = [r.diagnosis_id for r in self.records]
+            print(f"Registros disponibles: {ids}")
+            diagnosis_id = int(input("Ingrese el ID del diagnóstico a editar: "))
+
+            for record in self.records:
+                if record.diagnosis_id == diagnosis_id:
+                    print("\n📌 Registro encontrado:")
+                    print(record)
+
+                    confirm = (
+                        input("\n¿Desea editar este registro? (s/n): ").strip().lower()
+                    )
+                    if confirm != "s":
+                        print("❎ Edición cancelada.")
+                        return
+
+                    # Editar paciente
+                    edad = input(f"Edad del paciente [{record.patient.age}]: ").strip()
+                    if edad:
+                        record.patient.update_age(int(edad))
+                    genero = input(
+                        f"Género del paciente (0=masculino, 1=femenino) [{record.patient.gender}]: "
+                    ).strip()
+                    if genero:
+                        record.patient.update_gender(int(genero))
+
+                    # Editar tipo de diagnóstico
+                    tipo = input(
+                        f"Tipo de diagnóstico (0=sano, 1=glaucoma, 2=sospechoso) [{record.diagnosis}]: "
+                    ).strip()
+                    if tipo:
+                        record.update_diagnosis(int(tipo))
+
+                    # Editar examen OD
+                    print("\n=== Editar datos de OD (ojo derecho) ===")
+                    self.edit_eye_examination(record.eye_examination_od)
+
+                    # Editar examen OS
+                    print("\n=== Editar datos de OS (ojo izquierdo) ===")
+                    self.edit_eye_examination(record.eye_examination_os)
+
+                    print("\n✅ Registro editado correctamente.")
+                    return
+
+            print("❌ No se encontró ningún registro con ese ID.")
+        except ValueError:
+            print("❌ Entrada inválida. Debe ser un número.")
+
+    def edit_eye_examination(self, exam):
+        def is_valid_file(path, ext):
+            return os.path.exists(path) and path.lower().endswith(ext)
+
+        campos = [
+            ("Dioptría 1", exam.dioptre_1, exam.update_dioptre_1),
+            ("Dioptría 2", exam.dioptre_2, exam.update_dioptre_2),
+            ("Astigmatismo", exam.astigmatism, exam.update_astigmatism),
+            (
+                "Phakic/Pseudophakic (0/1)",
+                exam.phakic_pseudophakic,
+                exam.update_phakic_pseudophakic,
+            ),
+            ("Presión neumática", exam.pneumatic, exam.update_pneumatic),
+            ("Presión Perkins", exam.perkins, exam.update_perkins),
+            ("Paquimetría", exam.pachymetry, exam.update_pachymetry),
+            ("Longitud axial", exam.axial_length, exam.update_axial_length),
+            ("Defecto medio (VF_MD)", exam.vf_md, exam.update_vf_md),
+        ]
+
+        for label, actual, update_func in campos:
+            nuevo_valor = input(f"{label} [{actual}]: ").strip()
+            if nuevo_valor:
+                update_func(
+                    float(nuevo_valor)
+                    if "." in nuevo_valor or "e" in nuevo_valor.lower()
+                    else int(nuevo_valor)
+                )
+
+        print("\n=== Editar imagen de retina ===")
+        retina = exam.eye_image.retina_image
+        retina_path = input(
+            f"Ruta imagen retina [{retina.path_retina_image}]: "
+        ).strip()
+        if retina_path:
+            if is_valid_file(retina_path, ".jpg"):
+                retina.update_path_retina_image(os.path.normpath(retina_path))
+            else:
+                print(
+                    "⚠️ Ruta no válida o formato incorrecto. Se mantiene el archivo actual."
+                )
+
+        print("\n=== Editar contornos ===")
+        contours = exam.eye_image.contours_layer
+        cup1 = input(f"Ruta CUP EXP1 [{contours.path_retina_cup_exp1}]: ").strip()
+        if cup1:
+            if is_valid_file(cup1, ".txt"):
+                contours.update_path_retina_cup_exp1(os.path.normpath(cup1))
+            else:
+                print(
+                    "⚠️ Ruta no válida o formato incorrecto. Se mantiene el archivo actual."
+                )
+        cup2 = input(f"Ruta CUP EXP2 [{contours.path_retina_cup_exp2}]: ").strip()
+        if cup2:
+            if is_valid_file(cup2, ".txt"):
+                contours.update_path_retina_cup_exp2(os.path.normpath(cup2))
+            else:
+                print(
+                    "⚠️ Ruta no válida o formato incorrecto. Se mantiene el archivo actual."
+                )
+        disc1 = input(f"Ruta DISC EXP1 [{contours.path_retina_disc_exp1}]: ").strip()
+        if disc1:
+            if is_valid_file(disc1, ".txt"):
+                contours.update_path_retina_disc_exp1(os.path.normpath(disc1))
+            else:
+                print(
+                    "⚠️ Ruta no válida o formato incorrecto. Se mantiene el archivo actual."
+                )
+        disc2 = input(f"Ruta DISC EXP2 [{contours.path_retina_disc_exp2}]: ").strip()
+        if disc2:
+            if is_valid_file(disc2, ".txt"):
+                contours.update_path_retina_disc_exp2(os.path.normpath(disc2))
+            else:
+                print(
+                    "⚠️ Ruta no válida o formato incorrecto. Se mantiene el archivo actual."
+                )
+
+        print("\n=== Editar imagen con contornos superpuestos ===")
+        path_contours_img = input(
+            f"Ruta imagen contornos [{exam.eye_image.path_retina_contours_image}]: "
+        ).strip()
+        if path_contours_img:
+            if is_valid_file(path_contours_img, ".jpg"):
+                exam.eye_image.update_path_retina_contours_image(
+                    os.path.normpath(path_contours_img)
+                )
+            else:
+                print(
+                    "⚠️ Ruta no válida o formato incorrecto. Se mantiene el archivo actual."
+                )

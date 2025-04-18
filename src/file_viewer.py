@@ -15,6 +15,7 @@ class FileViewer:
     @staticmethod
     def _mostrar_imagen(path):
         try:
+            path = path.replace("'", "")
             img = mpimg.imread(path)
             plt.imshow(img)
             plt.axis("off")
@@ -25,6 +26,7 @@ class FileViewer:
 
     @staticmethod
     def _mostrar_texto(path, lines_per_page=40):
+        path = path.replace("'", "")
         try:
             with open(path, "r", encoding="utf-8") as f:
                 lineas = f.readlines()

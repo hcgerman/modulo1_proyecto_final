@@ -52,31 +52,6 @@ This project implements a module for managing medical images and their associate
    - Delete records
    - View statistics
 
-## Command Examples
-
-```
-# Register a new image
->> register --image path/to/image.png --metadata path/to/metadata.json
-
-# Search images by tag
->> search --tag "pneumonia"
-
-# Export metadata to CSV
->> export --format csv --output metadata_export.csv
-
-# Delete an image and its metadata
->> delete --image_id 12345
-```
-
-## System Architecture
-
-The system follows an object-oriented design with the following main components:
-
-1. **ImageManager**: Manages operations related to images.
-2. **MetadataManager**: Handles metadata associated with each image.
-3. **Database**: Provides an abstraction layer for persistent storage.
-4. **Main**: Coordinates interaction between modules and manages the user interface.
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

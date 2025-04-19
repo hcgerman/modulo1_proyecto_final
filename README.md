@@ -35,6 +35,7 @@ This project implements a module for managing medical images and their associate
 
 3. Install dependencies:
    ```
+   %pip install -r requirements.txt% VisualCode
    pip install -r requirements.txt
    ```
 
